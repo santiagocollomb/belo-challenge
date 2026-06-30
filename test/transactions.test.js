@@ -18,10 +18,10 @@ async function seed(saldoA = 100000, saldoB = 0) {
   return rows.map((r) => r.id);
 }
 
-async function api(method, path, body) {
+async function api(method, path, body, headers = {}) {
   const res = await fetch(base + path, {
     method,
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...headers },
     body: body ? JSON.stringify(body) : undefined,
   });
 
@@ -193,4 +193,21 @@ test("concurrencia: dos débitos simultáneos no sobregiran", async () => {
   assert.equal(fails.length, 1);
   assert.equal(await getSaldoDe(a), 20000);
   assert.ok((await getSaldoDe(a)) >= 0);
+});
+
+test("idempotencia: reintento con misma Idempotency-Key no duplica ni re-debita", async () => {
+  const [a, b] = await seed(100000, 0);
+  const body = { origin_id: a, destination_id: b, monto: 30000 };
+  const headers = { "Idempotency-Key": "abc-123" };
+
+  const r1 = await api("POST", "/transactions", body, headers);
+  const r2 = await api("POST", "/transactions", body, headers);
+
+  assert.equal(r1.status, 201);
+  assert.equal(r2.status, 200); // devuelve la original, no crea otra
+  assert.equal(r1.body.id, r2.body.id);
+  assert.equal(await getSaldoDe(a), 70000); // debitó una sola vez
+
+  const { body: list } = await api("GET", `/transactions?userId=${a}`);
+  assert.equal(list.length, 1);
 });

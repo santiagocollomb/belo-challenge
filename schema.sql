@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS transactions (
   destination_id INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   monto          NUMERIC(15,2) NOT NULL CHECK (monto > 0),
   estado         TEXT NOT NULL CHECK (estado IN ('pendiente', 'confirmada', 'rechazada')),
-  fecha          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  fecha          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  idempotency_key TEXT UNIQUE  -- opcional; reintentos con la misma key no duplican (UNIQUE permite múltiples NULL)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_user_email ON users(email);

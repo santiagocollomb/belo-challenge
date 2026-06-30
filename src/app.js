@@ -42,6 +42,9 @@ app.post("/transactions", async (req, res, next) => {
     if (origin_id === destination_id)
       throw new HttpError(400, "origin y destination deben ser distintos");
 
+    // Idempotencia opcional: con header Idempotency-Key, un reintento no duplica.
+    const idemKey = req.get("Idempotency-Key") || null;
+
     const estado = monto > PENDING_THRESHOLD ? "pendiente" : "confirmada";
 
     console.log(
@@ -60,9 +63,9 @@ app.post("/transactions", async (req, res, next) => {
         throw new HttpError(400, "saldo insuficiente");
 
       const { rows } = await client.query(
-        `INSERT INTO transactions (origin_id, destination_id, monto, estado)
-         VALUES ($1, $2, $3, $4) RETURNING *`,
-        [origin_id, destination_id, monto, estado],
+        `INSERT INTO transactions (origin_id, destination_id, monto, estado, idempotency_key)
+         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [origin_id, destination_id, monto, estado, idemKey],
       );
 
       if (estado === "confirmada") {
@@ -85,6 +88,14 @@ app.post("/transactions", async (req, res, next) => {
 
     res.status(201).json(dbTransaction);
   } catch (err) {
+    // Reintento con Idempotency-Key ya usada: devolvemos la transacción original.
+    if (err.code === "23505") {
+      const { rows } = await pool.query(
+        "SELECT * FROM transactions WHERE idempotency_key = $1",
+        [req.get("Idempotency-Key")],
+      );
+      if (rows[0]) return res.status(200).json(rows[0]);
+    }
     next(err);
   }
 });

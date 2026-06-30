@@ -30,7 +30,8 @@ npm test
 Cubren: umbral 50k, saldo insuficiente, confirmada/pendiente, approve/reject,
 doble approve, y concurrencia (dos débitos simultáneos no sobregiran).
 
-## Endpoints
+## Endpoints Postman
 
-Importar `belo_challenge.postman_collection.json`. Variable `baseUrl` = `http://localhost:3000`.
+Importar `belo_challenge.postman_collection.json` en Postman.
+Variable `baseUrl` = `http://localhost:3000`.
 Antes de probar correr `npm run seed` (crea usuarios id 1 y 2)
