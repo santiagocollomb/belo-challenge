@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: belo
+      POSTGRES_PASSWORD: belo
+      POSTGRES_DB: belo
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U belo"]
+      interval: 2s
+      timeout: 3s
+      retries: 10

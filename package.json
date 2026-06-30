@@ -1,0 +1,16 @@
+{
+  "name": "belo-challenge",
+  "version": "1.0.0",
+  "description": "Mini plataforma fintech - transacciones entre usuarios",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node src/scripts/seed.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "info": {
+    "_postman_id": "0e459fa0-33a4-41c7-a9a4-a9c910196d9f",
+    "name": "Belo Challenge",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2690068"
+  },
+  "item": [
+    {
+      "name": "POST /transactions (confirmada <=50k)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"origin_id\": 1,\n  \"destination_id\": 2,\n  \"monto\": 30000\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/transactions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "transactions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /transactions (pendiente >50k)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"origin_id\": 1,\n  \"destination_id\": 2,\n  \"monto\": 60000\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/transactions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "transactions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /transactions?userId=1",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/transactions?userId=1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "transactions"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PATCH /transactions/:id/approve",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/transactions/2/approve",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "transactions",
+            "2",
+            "approve"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PATCH /transactions/:id/reject",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/transactions/2/reject",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "transactions",
+            "2",
+            "reject"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
